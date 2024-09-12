@@ -58,7 +58,7 @@ public class LessonController {
     }
 
 
-    @GetMapping("/lesson-types")
+    @GetMapping("/lesson-types") 
     public List<LessonTypeDTO> getAllLessonTypes() {
         List<LessonType> lessonTypes = lessonTypeRepository.findAll();
         return lessonTypes.stream()
