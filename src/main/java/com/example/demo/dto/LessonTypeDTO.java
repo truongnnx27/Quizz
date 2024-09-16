@@ -1,16 +1,12 @@
 package com.example.demo.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.List;
+import java.util.Set;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class LessonTypeDTO {
     private Long id;
     private String typeName;
-    private List<LessonDTO> lessons; // Đây có thể gây vòng lặp nếu LessonDTO lại chứa LessonTypeDTO
+    private Set<LessonDTO> lessons; // có thể dùng Set thay List để tránh lặp
 }

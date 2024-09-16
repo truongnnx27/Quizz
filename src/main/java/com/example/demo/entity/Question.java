@@ -36,6 +36,9 @@ public class Question {
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt = LocalDateTime.now();
 
+    @Column(name = "points", columnDefinition = "int")
+    private int points;
+
     @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Option> options = new ArrayList<>();

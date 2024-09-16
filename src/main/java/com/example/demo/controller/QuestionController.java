@@ -1,36 +1,26 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.QuestionDTO;
-import com.example.demo.dto.QuestionTypeDTO;
-import com.example.demo.service.QuestionsService;
+import com.example.demo.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/question/api")
 public class QuestionController {
 
     @Autowired
-    private QuestionsService questionService;
+    private QuestionService questionService;
 
-    @GetMapping("/questions")
-    public ResponseEntity<List<QuestionDTO>> getAllQuestion()
+
+    @PostMapping("/createQuestion")
+    public ResponseEntity<QuestionDTO> createQuestion(@RequestBody QuestionDTO questionDTO)
     {
-        List<QuestionDTO> quesstion = questionService.getAllQuestions();
-        return ResponseEntity.ok(quesstion);
+        QuestionDTO createQuestion = questionService.createQuestion(questionDTO);
+        return ResponseEntity.ok(createQuestion);
     }
-
-    @GetMapping("questionsType")
-    public ResponseEntity<List<QuestionTypeDTO>> getAllQuestionType()
-    {
-        List<QuestionTypeDTO> questionType= questionService.getQuestionType();
-        return ResponseEntity.ok(questionType);
-    }
-
-
 }

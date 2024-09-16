@@ -19,6 +19,8 @@ public class Quiz {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Integer totalPoint;
+
     @ManyToOne
     @JoinColumn(name = "lesson_id")
     @JsonBackReference
