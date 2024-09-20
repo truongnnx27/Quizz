@@ -1,13 +1,18 @@
 package com.example.demo.service;
 
 import com.example.demo.MapStruct.LessonMapper;
+import com.example.demo.MapStruct.LessonTypeMapper;
 import com.example.demo.dto.LessonDTO;
+import com.example.demo.dto.LessonTypeDTO;
 import com.example.demo.entity.Lesson;
 import com.example.demo.entity.LessonType;
 import com.example.demo.reponsitory.LessonTypeRepository;
 import com.example.demo.reponsitory.lessonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class LessonService {
@@ -19,6 +24,8 @@ public class LessonService {
     private lessonRepository lessonDAO;
 
     private final LessonMapper lessonMapper = LessonMapper.INSTANCE;
+
+    private final LessonTypeMapper lessonTypeMapper =LessonTypeMapper.INSTANCE;
 
     public LessonDTO createLesson(LessonDTO lessonDTO)
     {
@@ -67,5 +74,18 @@ public class LessonService {
 
         lessonDAO.deleteById(id);
     }
+    
+    public List<LessonTypeDTO> getAllLessonType()
+    {
+        List<LessonType> lessonTypes = lessonTypeRepository.findAll();
+        return lessonTypes.stream().map(lessonTypeMapper::lessonTypeToLessonTypeDTO).collect(Collectors.toList());
+    }
+
+    public List<LessonDTO> getAllLesson()
+    {
+        List<Lesson> lessons = lessonDAO.findAll();
+        return lessons.stream().map(lessonMapper::lessonToLessonDTO).collect(Collectors.toList());
+    }
+
 
 }

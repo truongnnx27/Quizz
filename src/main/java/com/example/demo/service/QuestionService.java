@@ -2,8 +2,11 @@ package com.example.demo.service;
 
 import com.example.demo.MapStruct.OptionMapper;
 import com.example.demo.MapStruct.QuestionMapper;
+import com.example.demo.MapStruct.QuestionTypeMapper;
 import com.example.demo.MapStruct.QuizMapper;
 import com.example.demo.dto.QuestionDTO;
+import com.example.demo.dto.QuestionTypeDTO;
+import com.example.demo.dto.QuizDTO;
 import com.example.demo.entity.Option;
 import com.example.demo.entity.Question;
 import com.example.demo.entity.QuestionType;
@@ -35,34 +38,46 @@ public class QuestionService {
 
     private final QuestionMapper questionMapper = QuestionMapper.INSTANCE;
     private final OptionMapper optionMapper = OptionMapper.INSTANCE;
+    private final QuestionTypeMapper questionTypeMapper = QuestionTypeMapper.INSTANCE;
 
-    public QuestionDTO createQuestion(QuestionDTO questionDTO)
-    {
+    public QuestionDTO createQuestion(QuestionDTO questionDTO) {
+        // Lấy Quiz và QuestionType từ cơ sở dữ liệu theo ID từ DTO
         Quiz quiz = quizRepository.findById(questionDTO.getQuizId())
                 .orElseThrow(() -> new RuntimeException("Quiz not found"));
 
         QuestionType questionType = questionTypeRepository.findById(questionDTO.getQuestionTypeId())
                 .orElseThrow(() -> new RuntimeException("QuestionType not found"));
 
-        //Ánh xạ đối tượng QuestionDTO sang Question
+        // Ánh xạ DTO sang Entity của Question
         Question question = questionMapper.questionDTOToQuestion(questionDTO);
         question.setQuiz(quiz);
         question.setQuestionType(questionType);
 
+        // Lưu Question trước
+        Question createdQuestion = questionReponsitory.save(question);
 
-        Question createQuestion = questionReponsitory.save(question);
-
-        //Ánh xạ và lưu danh sách option
-        List<Option>  options = questionDTO.getOptions().stream()
+        // Ánh xạ và lưu danh sách Options
+        List<Option> options = questionDTO.getOptions().stream()
                 .map(optionDTO -> {
                     Option option = optionMapper.optionDTOToOption(optionDTO);
-                    option.setQuestion(createQuestion);
+                    option.setQuestion(createdQuestion); // Liên kết Option với Question vừa được lưu
                     return option;
                 }).collect(Collectors.toList());
 
-        optionRepository.saveAll(options); //lưu toàn bộ option
+        // Lưu toàn bộ Options
+        optionRepository.saveAll(options);
 
-        return questionMapper.questionToQuestionDTO(createQuestion);
+        // Trả về QuestionDTO đã được lưu với đầy đủ thông tin
+        QuestionDTO savedQuestionDTO = questionMapper.questionToQuestionDTO(createdQuestion);
+
+        // Đảm bảo thêm các Option vào DTO trả về
+        savedQuestionDTO.setOptions(
+                options.stream()
+                        .map(optionMapper::optionToOptionDTO)
+                        .collect(Collectors.toList())
+        );
+
+        return savedQuestionDTO;
     }
 
     public double calculateScoreForQuiz(Long quizId, List<Long> selectedOptionIds)
@@ -104,5 +119,18 @@ public class QuestionService {
 
         // Làm tròn điểm của người dùng lên 2 chữ số sau dấu phẩy
         return Math.round(userPoints * 100.0) / 100.0;
+    }
+
+    public  List<QuestionTypeDTO> getAllQuestionType()
+    {
+        List<QuestionType> questionType = questionTypeRepository.findAll();
+        return questionType.stream().map(questionTypeMapper::questionTypeToQuestionTypeDTO).collect(Collectors.toList());
+
+    }
+
+    public List<QuestionDTO> getAllQuestion()
+    {
+        List<Question> question = questionReponsitory.findAll();
+        return question.stream().map(questionMapper::questionToQuestionDTO).collect(Collectors.toList());
     }
 }

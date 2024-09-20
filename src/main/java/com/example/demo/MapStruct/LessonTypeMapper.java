@@ -8,6 +8,7 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface LessonTypeMapper {
+    LessonTypeMapper INSTANCE = Mappers.getMapper(LessonTypeMapper.class);
     @Mapping(target = "lessons", ignore = true) // Bỏ qua lessons để tránh lặp vô hạn
     LessonTypeDTO lessonTypeToLessonTypeDTO(LessonType lessonType);
 

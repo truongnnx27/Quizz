@@ -1,10 +1,14 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.LessonDTO;
+import com.example.demo.dto.LessonTypeDTO;
+import com.example.demo.entity.LessonType;
 import com.example.demo.service.LessonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/lessons/api")
@@ -32,5 +36,12 @@ public class LessonController {
     {
         lessonService.deleteLesson(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/getAllLessonType")
+    public ResponseEntity<List<LessonTypeDTO>> getAllLessonType()
+    {
+        List<LessonTypeDTO> getAllLessonTypes =lessonService.getAllLessonType();
+        return ResponseEntity.ok(getAllLessonTypes);
     }
 }

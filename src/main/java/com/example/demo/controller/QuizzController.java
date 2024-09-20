@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.LessonDTO;
 import com.example.demo.dto.QuizDTO;
+import com.example.demo.service.LessonService;
 import com.example.demo.service.QuestionService;
 import com.example.demo.service.QuizzService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class QuizzController {
     @Autowired
     private QuestionService questionService;
 
+    @Autowired
+    private LessonService lessonService;
+
     @PostMapping("/createQuiz")
     public ResponseEntity<QuizDTO> createQuiz(@RequestBody QuizDTO quizDTO)
     {
@@ -34,5 +39,12 @@ public class QuizzController {
     ) {
         double score = questionService.calculateScoreForQuiz(quizId, selectedOptionIds);
         return ResponseEntity.ok(score);
+    }
+
+    @GetMapping("/getAllLesson")
+    public ResponseEntity<List<LessonDTO>> getAllLesson()
+    {
+        List<LessonDTO> allLesson = lessonService.getAllLesson();
+        return ResponseEntity.ok(allLesson);
     }
 }

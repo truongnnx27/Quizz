@@ -9,6 +9,9 @@ import com.example.demo.reponsitory.lessonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class QuizzService {
 
@@ -31,5 +34,11 @@ public class QuizzService {
         Quiz saveQuiz = quizRepository.save(quiz);
 
         return quizMapper.quizToQuizDTO(saveQuiz);
+    }
+
+    public List<QuizDTO> getAllQuiz()
+    {
+        List<Quiz> quizzed = quizRepository.findAll();
+        return  quizzed.stream().map(quizMapper::quizToQuizDTO).collect(Collectors.toList());
     }
 }
